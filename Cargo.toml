@@ -5,6 +5,9 @@ edition = "2021"
 resolver = "2"
 authors = ["gluax"]
 license = "MIT OR Apache-2.0"
+description = "Adds the ability to use deserializable data as a clap argument"
+readme = "README.md"
+repository = "https://github.com/gluax/clap-maybe-deser"
 
 [features]
 default = []
