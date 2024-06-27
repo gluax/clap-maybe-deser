@@ -168,8 +168,8 @@ where
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            MaybeDeser::Data(deser) => write!(f, "{}", deser),
-            MaybeDeser::Fields(_) => write!(f, "Fields"),
+            MaybeStdinDeser::Data(deser) => write!(f, "{}", deser),
+            MaybeStdinDeser::Fields(_) => write!(f, "Fields"),
         }
     }
 }
