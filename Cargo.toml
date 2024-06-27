@@ -1,0 +1,23 @@
+[package]
+name = "clap-maybe-deser"
+version = "0.1.0"
+edition = "2021"
+resolver = "2"
+authors = ["gluax"]
+license = "MIT OR Apache-2.0"
+
+[features]
+default = []
+serde_json = ["dep:serde_json"]
+stdin = ["dep:clap-stdin"]
+
+[dependencies]
+clap = { version = "4.5" }
+clap-stdin = { version = "0.4", optional = true }
+serde = { version = "1.0", default-features = false }
+serde_json = { version = "1.0", optional = true, default-features = false }
+
+[dev-dependencies]
+clap = { version = "4.5", default-features = true, features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = ["alloc"] }
