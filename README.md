@@ -15,40 +15,51 @@ Provides wrapper types to allow:
 
 To parse a serde deserializable object as a flag:
 ```rust
+// You can run this example with: ` cargo run --features serde_json --example json_config --`
 use clap::Parser;
+use clap_maybe_deser::{Deser, JsonDeserializer};
 use serde::Deserialize;
-use clap_maybe_deser::Deser;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct Config {
-    key: String,
+    key:   String,
     value: String,
 }
 
 #[derive(Parser, Debug)]
 struct Cli {
-    #[clap(flatten)]
+    #[clap(long, short)]
     config: Deser<Config, JsonDeserializer>,
 }
 
 fn main() {
     let args = Cli::parse();
-    println!("{:?}", args.config.data);
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }
+
 ```
+
+The help output looks like:
+![Json Config Help Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/deser_json_config_help.png)
+
+The usage looks like:
+![Json Config Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/deser_json_config.png)
+
 
 ### `MaybeDeser`
 
 To parse either flags or a deserializable object:
 
 ```rust
-use clap::Parser;
+// You can run this example with: ` cargo run --features serde_json --example maybe_json_config --`
+use clap::{Args, Parser};
+use clap_maybe_deser::{JsonDeserializer, MaybeDeser};
 use serde::Deserialize;
-use clap_maybe_deser::MaybeDeser;
 
-#[derive(Deserialize, Debug, clap::Args)]
+#[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
-    key: String,
+    key:   String,
     value: String,
 }
 
@@ -61,25 +72,42 @@ struct Cli {
 fn main() {
     let args = Cli::parse();
     match args.config {
-        MaybeDeser::Data(deser) => println!("{:?}", deser.data),
-        MaybeDeser::Fields(fields) => println!("{:?}", fields),
+        MaybeDeser::Data(config) => {
+            println!("key from json: {}", config.data.key);
+            println!("value  from json: {}", config.data.value);
+        }
+        MaybeDeser::Fields(fields) => {
+            println!("key from fields: {}", fields.key);
+            println!("value  from fields: {}", fields.value);
+        }
     }
 }
 ```
+
+The help output looks like:
+![Mayble Json Config Help Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_help.png)
+
+The usage passing json looks like:
+![Maybe Json Config Json Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_json.png)
+
+The usage passing flags looks like:
+![Maybe Json Config Flags Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_flags.png)
+
+
 
 ### `MaybeStdinDeser`
 
 To parse a deserializable object from maybe stdin or flags:
 
 ```rust
-use clap::Parser;
+// You can run this example with: `cargo run --features serde_json,stdin --example maybe_stdin_json_config --`
+use clap::{Args, Parser};
+use clap_maybe_deser::{JsonDeserializer, MaybeStdinDeser};
 use serde::Deserialize;
-use clap_maybe_deser::MaybeStdinDeser;
 
-
-#[derive(Deserialize, Debug)]
+#[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
-    key: String,
+    key:   String,
     value: String,
 }
 
@@ -91,51 +119,70 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    println!("{:?}", args.config.data);
+    match args.config {
+        MaybeStdinDeser::Data(config) => {
+            println!("key from json: {}", config.data.key);
+            println!("value  from json: {}", config.data.value);
+        }
+        MaybeStdinDeser::Fields(fields) => {
+            println!("key from fields: {}", fields.key);
+            println!("value  from fields: {}", fields.value);
+        }
+    }
 }
+
 ```
+
+The output and usage methods are the exact same as above but now you can pass in the `JSON` from `stdin`:
+![Maybe Json Config Json Stdin Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_stdin_deser_json_config.png)
+
 
 ### Custom Implmentations
 
 To support whatever Deserialize friendly implementation you want you can do:
 
 ```rust
-use serde::Deserialize;
-use serde_yaml;
-use std::fmt;
-use std::error::Error;
-use clap_maybe_deser::CustomDeserializer;
+// You can run this example with: `cargo run --example custom_yaml_config --`
+use clap::Parser;
+use clap_maybe_deser::{CustomDeserializer, Deser};
+use serde::{de::DeserializeOwned, Deserialize};
 
-// Implement the trait for YAML deserialization
+#[derive(Debug, Clone)]
 struct YamlDeserializer;
 
 impl CustomDeserializer for YamlDeserializer {
+    type Error = serde_yml::Error;
+
     const NAME: &'static str = "yaml";
-    type Error = serde_yaml::Error;
 
     fn from_str<Data: DeserializeOwned>(s: &str) -> Result<Data, Self::Error> {
-        serde_yaml::from_str(s)
+        serde_yml::from_str(s)
     }
 }
 
-// Example usage
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct Config {
-    key: String,
+    key:   String,
     value: String,
 }
 
 #[derive(Parser, Debug)]
 struct Cli {
-    #[clap(flatten)]
+    #[clap(long, short)]
     config: Deser<Config, YamlDeserializer>,
 }
 
 fn main() {
     let args = Cli::parse();
-    println!("{:?}", args.config.data);
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }
+
 ```
+
+You can see this in action as well:
+![Custom Yaml Config Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/custom_yaml_config.png)
+
 
 ## TODO's
 
