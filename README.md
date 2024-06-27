@@ -134,7 +134,7 @@ fn main() {
 ```
 
 The output and usage methods are the exact same as above but now you can pass in the `JSON` from `stdin`:
-![Maybe Json Config Json Stdin Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_stdin_deser_json_config.png)
+![Maybe Json Config Json Stdin Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_stdin_json_config.png)
 
 
 ### Custom Implmentations
