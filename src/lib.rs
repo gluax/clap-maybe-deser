@@ -24,8 +24,8 @@ pub struct Deser<Data, Deserializer> {
     _deserializer: PhantomData<Deserializer>,
 }
 
-impl<Data, Deserializer> Deser<Data, Deserializer> {
-    fn new(data: Data) -> Self {
+impl<Data, Deserializer> From<Data> for Deser<Data, Deserializer> {
+    fn from(data: Data) -> Self {
         Deser {
             data,
             _deserializer: PhantomData,
@@ -59,9 +59,18 @@ where
 }
 
 #[derive(Debug)]
-pub enum MaybeDeser<Data, Deserializer> {
-    Data(Deser<Data, Deserializer>),
-    Fields(Data),
+pub struct MaybeDeser<Data, Deserializer> {
+    pub data:      Data,
+    _deserializer: PhantomData<Deserializer>,
+}
+
+impl<Data, Deserializer> From<Data> for MaybeDeser<Data, Deserializer> {
+    fn from(data: Data) -> Self {
+        MaybeDeser {
+            data,
+            _deserializer: PhantomData,
+        }
+    }
 }
 
 impl<Data, Deserializer> fmt::Display for MaybeDeser<Data, Deserializer>
@@ -69,10 +78,7 @@ where
     Data: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            MaybeDeser::Data(deser) => write!(f, "{}", deser),
-            MaybeDeser::Fields(_) => write!(f, "Fields"),
-        }
+        write!(f, "{}", self.data)
     }
 }
 
@@ -83,13 +89,12 @@ where
 {
     fn from_arg_matches(matches: &clap::ArgMatches) -> std::result::Result<Self, clap::Error> {
         if let Some(data_str) = matches.get_one::<String>(Deserializer::NAME) {
-            // if let Some(maybe_stdin) = matches.get_one::<MaybeStdin<String>>(Deserializer::NAME) {
             let data: Data = Deserializer::from_str(data_str)
                 .map_err(|e: Deserializer::Error| clap::Error::raw(clap::error::ErrorKind::InvalidValue, e))?;
-            Ok(MaybeDeser::Data(Deser::new(data)))
+            Ok(Self::from(data))
         } else {
             let fields = Data::from_arg_matches(matches)?;
-            Ok(MaybeDeser::Fields(fields))
+            Ok(Self::from(fields))
         }
     }
 
@@ -98,11 +103,9 @@ where
             let data: Data = Deserializer::from_str(data_str).map_err(|e: Deserializer::Error| {
                 clap::Error::raw(clap::error::ErrorKind::InvalidValue, e.to_string())
             })?;
-            *self = MaybeDeser::Data(Deser::new(data));
-        } else if let MaybeDeser::Fields(ref mut fields) = self {
-            fields.update_from_arg_matches(matches)?;
+            *self = Self::from(data);
         } else {
-            *self = MaybeDeser::Fields(Data::from_arg_matches(matches)?);
+            *self = Self::from(Data::from_arg_matches(matches)?);
         }
         Ok(())
     }
@@ -156,9 +159,19 @@ where
 
 #[cfg(feature = "stdin")]
 #[derive(Debug)]
-pub enum MaybeStdinDeser<Data, Deserializer> {
-    Data(Deser<Data, Deserializer>),
-    Fields(Data),
+pub struct MaybeStdinDeser<Data, Deserializer> {
+    pub data:      Data,
+    _deserializer: PhantomData<Deserializer>,
+}
+
+#[cfg(feature = "stdin")]
+impl<Data, Deserializer> From<Data> for MaybeStdinDeser<Data, Deserializer> {
+    fn from(data: Data) -> Self {
+        MaybeStdinDeser {
+            data,
+            _deserializer: PhantomData,
+        }
+    }
 }
 
 #[cfg(feature = "stdin")]
@@ -167,10 +180,7 @@ where
     Data: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            MaybeStdinDeser::Data(deser) => write!(f, "{}", deser),
-            MaybeStdinDeser::Fields(_) => write!(f, "Fields"),
-        }
+        write!(f, "{}", self.data)
     }
 }
 
@@ -185,10 +195,10 @@ where
             let data_str = maybe_stdin.as_ref();
             let data: Data = Deserializer::from_str(data_str)
                 .map_err(|e: Deserializer::Error| clap::Error::raw(clap::error::ErrorKind::InvalidValue, e))?;
-            Ok(MaybeStdinDeser::Data(Deser::new(data)))
+            Ok(Self::from(data))
         } else {
             let fields = Data::from_arg_matches(matches)?;
-            Ok(MaybeStdinDeser::Fields(fields))
+            Ok(Self::from(fields))
         }
     }
 
@@ -198,11 +208,9 @@ where
             let data: Data = Deserializer::from_str(data_str).map_err(|e: Deserializer::Error| {
                 clap::Error::raw(clap::error::ErrorKind::InvalidValue, e.to_string())
             })?;
-            *self = MaybeStdinDeser::Data(Deser::new(data));
-        } else if let MaybeStdinDeser::Fields(ref mut fields) = self {
-            fields.update_from_arg_matches(matches)?;
+            *self = Self::from(data);
         } else {
-            *self = MaybeStdinDeser::Fields(Data::from_arg_matches(matches)?);
+            *self = Self::from(Data::from_arg_matches(matches)?);
         }
         Ok(())
     }

@@ -16,14 +16,6 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    match args.config {
-        MaybeStdinDeser::Data(config) => {
-            println!("key from json: {}", config.data.key);
-            println!("value  from json: {}", config.data.value);
-        }
-        MaybeStdinDeser::Fields(fields) => {
-            println!("key from fields: {}", fields.key);
-            println!("value  from fields: {}", fields.value);
-        }
-    }
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }
