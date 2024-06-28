@@ -43,13 +43,13 @@ fn main() {
 The help output looks like:
 ![Json Config Help Example](screenshots/deser_json_config_help.png)
 
-The usage looks like:
+The usage for the CLI looks like:
 ![Json Config Use Example](screenshots/deser_json_config.png)
 
 
 ### `MaybeDeser`
 
-To parse either flags or a deserializable object:
+To parse as either flags or a deserializable string:
 
 ```rust
 // You can run this example with: ` cargo run --features serde_json --example maybe_json_config --`
@@ -91,7 +91,7 @@ The usage passing flags looks like:
 
 ### `MaybeStdinDeser`
 
-To parse a deserializable object from maybe stdin or flags:
+To parse a deserializable string from stdin, as a flag for the deserializable string or flags:
 
 ```rust
 // You can run this example with: `cargo run --features serde_json,stdin --example maybe_stdin_json_config --`
@@ -120,7 +120,7 @@ fn main() {
 }
 ```
 
-The output and usage methods are the exact same as above but now you can pass in the `JSON` from `stdin`:
+The output and usage methods are the exact same as `MaybeDeser` but now you could also pass in the `JSON` from `stdin`:
 ![Maybe Json Config Json Stdin Use Example](screenshots/maybe_stdin_json_config.png)
 
 
