@@ -4,7 +4,9 @@ use serde::Deserialize;
 
 #[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
+    #[clap(long, short)]
     key:   String,
+    #[clap(long, short)]
     value: String,
 }
 

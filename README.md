@@ -41,10 +41,10 @@ fn main() {
 ```
 
 The help output looks like:
-![Json Config Help Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/deser_json_config_help.png)
+![Json Config Help Example](screenshots/deser_json_config_help.png)
 
 The usage looks like:
-![Json Config Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/deser_json_config.png)
+![Json Config Use Example](screenshots/deser_json_config.png)
 
 
 ### `MaybeDeser`
@@ -59,7 +59,9 @@ use serde::Deserialize;
 
 #[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
+    #[clap(long, short)]
     key:   String,
+    #[clap(long, short)]
     value: String,
 }
 
@@ -71,27 +73,19 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    match args.config {
-        MaybeDeser::Data(config) => {
-            println!("key from json: {}", config.data.key);
-            println!("value  from json: {}", config.data.value);
-        }
-        MaybeDeser::Fields(fields) => {
-            println!("key from fields: {}", fields.key);
-            println!("value  from fields: {}", fields.value);
-        }
-    }
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }
 ```
 
 The help output looks like:
-![Mayble Json Config Help Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_help.png)
+![Mayble Json Config Help Example](screenshots/maybe_deser_json_config_help.png)
 
 The usage passing json looks like:
-![Maybe Json Config Json Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_json.png)
+![Maybe Json Config Json Use Example](screenshots/maybe_deser_json_config_json.png)
 
 The usage passing flags looks like:
-![Maybe Json Config Flags Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_deser_json_config_flags.png)
+![Maybe Json Config Flags Use Example](screenshots/maybe_deser_json_config_flags.png)
 
 
 
@@ -107,7 +101,9 @@ use serde::Deserialize;
 
 #[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
+    #[clap(long, short)]
     key:   String,
+    #[clap(long, short)]
     value: String,
 }
 
@@ -119,22 +115,13 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    match args.config {
-        MaybeStdinDeser::Data(config) => {
-            println!("key from json: {}", config.data.key);
-            println!("value  from json: {}", config.data.value);
-        }
-        MaybeStdinDeser::Fields(fields) => {
-            println!("key from fields: {}", fields.key);
-            println!("value  from fields: {}", fields.value);
-        }
-    }
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }
-
 ```
 
 The output and usage methods are the exact same as above but now you can pass in the `JSON` from `stdin`:
-![Maybe Json Config Json Stdin Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/maybe_stdin_json_config.png)
+![Maybe Json Config Json Stdin Use Example](screenshots/maybe_stdin_json_config.png)
 
 
 ### Custom Implmentations
@@ -181,13 +168,14 @@ fn main() {
 ```
 
 You can see this in action as well:
-![Custom Yaml Config Use Example](https://github.com/gluax/clap-maybe-deser/blob/main/screenshots/custom_yaml_config.png)
+![Custom Yaml Config Use Example](screenshots/custom_yaml_config.png)
 
 
 ## TODO's
 
 - [ ] Support more serde crates out of the box.
 - [ ] Dynamic naming of the flag for `MaybeDeser` and `MaybeStdinDeser`.
+- [ ] Add support for also reading from a File via `clap-stdin`'s `FileOrStdin`.
 
 ## Licensing
 
