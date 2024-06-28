@@ -4,7 +4,9 @@ use serde::Deserialize;
 
 #[derive(Args, Deserialize, Debug, Clone)]
 struct Config {
+    #[clap(long, short)]
     key:   String,
+    #[clap(long, short)]
     value: String,
 }
 
@@ -16,14 +18,6 @@ struct Cli {
 
 fn main() {
     let args = Cli::parse();
-    match args.config {
-        MaybeDeser::Data(config) => {
-            println!("key from json: {}", config.data.key);
-            println!("value  from json: {}", config.data.value);
-        }
-        MaybeDeser::Fields(fields) => {
-            println!("key from fields: {}", fields.key);
-            println!("value  from fields: {}", fields.value);
-        }
-    }
+    println!("key: {}", args.config.data.key);
+    println!("value: {}", args.config.data.value);
 }

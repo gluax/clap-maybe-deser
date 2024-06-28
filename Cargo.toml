@@ -1,6 +1,6 @@
 [package]
 name = "clap-maybe-deser"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 resolver = "2"
 authors = ["gluax"]
@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 description = "Adds the ability to use deserializable data as a clap argument"
 readme = "README.md"
 repository = "https://github.com/gluax/clap-maybe-deser"
-include = ["examples/**", "src/**"]
+include = ["examples/**", "src/**", "screenshots/**"]
 
 [features]
 default = []
